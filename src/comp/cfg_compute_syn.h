@@ -56,32 +56,32 @@ public:
 
     static PEGraph* transfer(PEGraph* in, Stmt* stmt, Grammar* grammar, Singletons* singletons, bool flag,
     		Timer_wrapper_inmemory* timer = nullptr){
-        switch(stmt->getType()){
-            case TYPE::Assign:
-                return transfer_copy(in, (AssignStmt*)stmt, grammar, singletons, flag, timer);
-            case TYPE::Load:
-                return transfer_load(in, (LoadStmt*)stmt, grammar, singletons, flag, timer);
-            case TYPE::Store:
-                return transfer_store(in, (StoreStmt*)stmt, grammar, singletons, flag, timer);
-            case TYPE::Alloca:
-                return transfer_address(in, (AllocStmt*)stmt, grammar, singletons, flag, timer);
-            case TYPE::Phi:
-            	return transfer_phi(in, (PhiStmt*)stmt, grammar, singletons, flag, timer);
-            case TYPE::Call:
-            	return transfer_call(in);
-            case TYPE::Return:
-            	return transfer_return(in);
-            case TYPE::Ret:
-            	return transfer_ret(in);
-            case TYPE::Skip:
-            	return transfer_skip(in);
-            case TYPE::Callfptr:
-            	return transfer_callfptr(in);
-            case TYPE::Calleefptr:
-                return transfer_calleefptr(in);
-            default:
+//        switch(stmt->getType()){
+//            case TYPE::Assign:
+//                return transfer_copy(in, (AssignStmt*)stmt, grammar, singletons, flag, timer);
+//            case TYPE::Load:
+//                return transfer_load(in, (LoadStmt*)stmt, grammar, singletons, flag, timer);
+//            case TYPE::Store:
+//                return transfer_store(in, (StoreStmt*)stmt, grammar, singletons, flag, timer);
+//            case TYPE::Alloca:
+//                return transfer_address(in, (AllocStmt*)stmt, grammar, singletons, flag, timer);
+//            case TYPE::Phi:
+//            	return transfer_phi(in, (PhiStmt*)stmt, grammar, singletons, flag, timer);
+//            case TYPE::Call:
+//            	return transfer_call(in);
+//            case TYPE::Return:
+//            	return transfer_return(in);
+//            case TYPE::Ret:
+//            	return transfer_ret(in);
+//            case TYPE::Skip:
+//            	return transfer_skip(in);
+//            case TYPE::Callfptr:
+//            	return transfer_callfptr(in);
+//            case TYPE::Calleefptr:
+//                return transfer_calleefptr(in);
+//            default:
                 return nullptr;
-        }
+
     }
 
     static PEGraph* combine_synchronous(GraphStore* graphstore, std::vector<CFGNode*>* preds, CFGNode* cfg_node, Grammar* grammar);
@@ -109,39 +109,39 @@ public:
 	}
 
 	static void propagate(CFGNode *cfg_node, CFG *cfg, PEGraph *out, Grammar *grammar, Concurrent_Worklist<CFGNode*> *worklist_2) {
-		//propagate
-		if (cfg_node->getStmt()->getType() == TYPE::Callfptr) {
-			//to deal with function pointer callsite
-			std::vector<CFGNode*> *successors = cfg->getSuccessors(cfg_node);
-			if (successors) {
-				for (auto it = successors->cbegin(); it != successors->cend(); ++it) {
-					CFGNode *suc = *it;
-					if(suc->getStmt() && suc->getStmt()->getType() == TYPE::Calleefptr){
-						if (CFGCompute_syn::isFeasible(suc->getStmt(), cfg_node->getStmt(), out, grammar)) {
-							worklist_2->push_atomic(*it);
-						}
-					}
-					else{
-						worklist_2->push_atomic(*it);
-					}
-				}
-			}
-		}
-		else {
-			//propagate
-			std::vector<CFGNode*> *successors = cfg->getSuccessors(cfg_node);
-			if (successors) {
-				for (auto it = successors->cbegin(); it != successors->cend(); ++it) {
-					CFGNode* suc = *it;
-					if(suc->getStmt() && suc->getStmt()->getType() == TYPE::Return && ((ReturnStmt*)(suc->getStmt()))->getLength() == 0 &&
-							(cfg_node->getStmt()->getType() == TYPE::Callfptr || cfg_node->getStmt()->getType() == TYPE::Call)){
-						continue;
-					}
-
-					worklist_2->push_atomic(*it);
-				}
-			}
-		}
+//		//propagate
+//		if (cfg_node->getStmt()->getType() == TYPE::Callfptr) {
+//			//to deal with function pointer callsite
+//			std::vector<CFGNode*> *successors = cfg->getSuccessors(cfg_node);
+//			if (successors) {
+//				for (auto it = successors->cbegin(); it != successors->cend(); ++it) {
+//					CFGNode *suc = *it;
+//					if(suc->getStmt() && suc->getStmt()->getType() == TYPE::Calleefptr){
+//						if (CFGCompute_syn::isFeasible(suc->getStmt(), cfg_node->getStmt(), out, grammar)) {
+//							worklist_2->push_atomic(*it);
+//						}
+//					}
+//					else{
+//						worklist_2->push_atomic(*it);
+//					}
+//				}
+//			}
+//		}
+//		else {
+//			//propagate
+//			std::vector<CFGNode*> *successors = cfg->getSuccessors(cfg_node);
+//			if (successors) {
+//				for (auto it = successors->cbegin(); it != successors->cend(); ++it) {
+//					CFGNode* suc = *it;
+//					if(suc->getStmt() && suc->getStmt()->getType() == TYPE::Return && ((ReturnStmt*)(suc->getStmt()))->getLength() == 0 &&
+//							(cfg_node->getStmt()->getType() == TYPE::Callfptr || cfg_node->getStmt()->getType() == TYPE::Call)){
+//						continue;
+//					}
+//
+//					worklist_2->push_atomic(*it);
+//				}
+//			}
+//		}
 	}
 
 private:
